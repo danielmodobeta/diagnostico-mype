@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico comercial para tu negocio</title>
+<meta name="description" content="Herramienta de investigación: diagnóstico comercial gratuito y anónimo para micro y pequeñas empresas.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6f8; --card:#ffffff; --ink:#1c2733; --muted:#5b6876; --line:#dde3ea;
+  --brand:#0f6e6e; --brand-ink:#ffffff; --brand-soft:#e3f2f1;
+  --f:#1d7a46; --f-bg:#eaf6ee; --d:#b5442e; --d-bg:#fbeeea;
+  --o:#1f5fa8; --o-bg:#e9f1fb; --a:#a8660b; --a-bg:#fdf3e3;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:640px;margin:0 auto;padding:16px 16px 48px}
+header.top{padding:8px 0 16px}
+.tag{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:4px 10px}
+h1{font-size:24px;line-height:1.25;margin:12px 0 6px}
+h2{font-size:20px;line-height:1.3;margin:0 0 4px}
+h3{font-size:16px;margin:0 0 6px}
+p{margin:0 0 12px}
+.muted{color:var(--muted);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.screen{display:none}
+.screen.active{display:block}
+.progress{height:6px;background:var(--line);border-radius:999px;overflow:hidden;margin:4px 0 6px}
+.progress>div{height:100%;background:var(--brand);width:0;transition:width .3s}
+.steptxt{font-size:13px;color:var(--muted);margin-bottom:12px}
+.q{margin:18px 0 6px;font-weight:600}
+.q small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:10px 14px;font-size:15px;cursor:pointer;line-height:1.2;font-family:inherit;min-height:44px}
+.chip[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:600}
+.chip:disabled{opacity:.4;cursor:not-allowed}
+input[type=text],textarea{width:100%;font:inherit;font-size:16px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink)}
+input[type=text]:focus,textarea:focus{outline:none;border-color:var(--brand)}
+textarea{min-height:84px;resize:vertical}
+.otro{margin-top:8px;display:none}
+.otro.show{display:block}
+.count{font-size:12px;color:var(--muted);text-align:right;margin-top:2px}
+.btns{display:flex;gap:10px;margin-top:22px}
+.btn{flex:1;border:0;border-radius:12px;padding:14px 16px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;min-height:50px}
+.btn.primary{background:var(--brand);color:var(--brand-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);flex:0 0 auto}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.err{display:none;color:var(--d);background:var(--d-bg);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:14px}
+.err.show{display:block}
+.check{display:flex;gap:12px;align-items:flex-start;background:var(--brand-soft);border-radius:12px;padding:14px;margin-top:16px;cursor:pointer}
+.check input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--brand);flex:0 0 auto}
+ul.plain{margin:0 0 12px;padding-left:20px}
+ul.plain li{margin-bottom:6px}
+.loader{text-align:center;padding:36px 12px}
+.spin{width:44px;height:44px;border:4px solid var(--line);border-top-color:var(--brand);border-radius:50%;margin:0 auto 16px;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
+.box{border-radius:12px;padding:14px;border:1px solid transparent}
+.box h3{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.box h3 span{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;opacity:.8}
+.box ul{margin:0;padding-left:18px}
+.box li{margin-bottom:4px;font-size:15px}
+.box p{font-size:15px;margin-bottom:8px}
+.bF{background:var(--f-bg);color:var(--f)} .bD{background:var(--d-bg);color:var(--d)}
+.bO{background:var(--o-bg);color:var(--o)} .bA{background:var(--a-bg);color:var(--a)}
+.box ul,.box p{color:var(--ink)}
+.prio{display:flex;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+.prio:first-of-type{border-top:0;padding-top:4px}
+.num{flex:0 0 32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.prio p{margin:0 0 4px;font-size:15px}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:22px;font-weight:700;letter-spacing:.08em;color:var(--brand)}
+.final{background:var(--brand);color:#fff;border:0}
+.final p{color:#e8f4f3}
+.final .btn{background:#fff;color:var(--brand);width:100%}
+.note{font-size:13px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+.cost{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;margin-right:6px;vertical-align:1px;white-space:nowrap}
+.c0{background:#dcf2e3;color:#17663a}.c1{background:#fdf0cf;color:#8a5a00}.c2{background:#fbe0da;color:#a33a25}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px;font-size:13px;color:var(--muted)}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;font-size:13px;cursor:pointer;padding:8px 0}
+footer{text-align:center;font-size:12px;color:var(--muted);margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <span class="tag">Investigación académica · anónima</span>
+  <div id="demoBanner" style="display:none;margin-top:10px;background:#fdf0cf;color:#8a5a00;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600">MODO DEMOSTRACIÓN: el diagnóstico es un ejemplo fijo, no lo genera la IA.</div>
+</header>
+
+<!-- 0. Bienvenida -->
+<section class="screen active" id="s0">
+  <div class="card">
+    <h1>Diagnóstico comercial gratuito para tu negocio</h1>
+    <p>Responde unas preguntas sencillas sobre tu negocio y una inteligencia artificial te preparará un diagnóstico con acciones concretas para mejorar tus ventas.</p>
+    <ul class="plain">
+      <li>Toma unos <b>5 minutos</b>.</li>
+      <li>Es <b>anónimo</b>: no te pediremos tu nombre, teléfono ni correo.</li>
+      <li>Al final podrás <b>descargar tu diagnóstico en PDF</b>.</li>
+      <li>Luego te pediremos responder una breve encuesta (5 minutos).</li>
+    </ul>
+    <p class="muted">Esta herramienta forma parte de una tesis del Programa de Titulación de la Universidad Tecnológica del Perú sobre el uso de la inteligencia artificial generativa en las MYPES de Huancayo. Tus respuestas sobre el negocio se procesan con un servicio de inteligencia artificial de Google y se guardan de forma anónima, solo con fines académicos. Puedes dejar de participar en cualquier momento.</p>
+    <label class="check"><input type="checkbox" id="acepto"><span>Acepto participar de forma voluntaria y anónima.</span></label>
+    <div class="err" id="err0">Para continuar, marca la casilla de aceptación.</div>
+    <div class="btns"><button class="btn primary" onclick="empezar()">Empezar</button></div>
+  </div>
+</section>
+
+<!-- 1-4. Preguntas -->
+<section class="screen" id="sQ">
+  <div class="card">
+    <div class="progress"><div id="pbar"></div></div>
+    <div class="steptxt" id="steptxt"></div>
+    <h2 id="qtitle"></h2>
+    <p class="muted" id="qsub"></p>
+    <div id="qbody"></div>
+    <div class="err" id="errQ"></div>
+    <div class="btns">
+      <button class="btn ghost" onclick="atras()">← Atrás</button>
+      <button class="btn primary" id="btnNext" onclick="siguiente()">Siguiente →</button>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Cargando / error -->
+<section class="screen" id="sL">
+  <div class="card">
+    <div class="loader" id="loading">
+      <div class="spin"></div>
+      <h2>Preparando tu diagnóstico…</h2>
+      <p class="muted">La inteligencia artificial está analizando tus respuestas. Puede tardar hasta un minuto.</p>
+    </div>
+    <div id="failbox" style="display:none">
+      <h2>No pudimos generar tu diagnóstico</h2>
+      <p class="muted">Puede ser un problema de conexión. Tus respuestas están guardadas; no tienes que volver a escribirlas.</p>
+      <div class="btns">
+        <button class="btn ghost" onclick="irPaso(3)">← Revisar</button>
+        <button class="btn primary" onclick="generar()">Reintentar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Resultado -->
+<section class="screen" id="sR">
+  <div class="card">
+    <span class="tag">Tu diagnóstico</span>
+    <h1 id="rTitulo">Diagnóstico comercial</h1>
+    <p id="rResumen"></p>
+    <p class="note">Este diagnóstico fue elaborado por inteligencia artificial a partir de tus respuestas. Úsalo como guía y compleméntalo con tu propio criterio.</p>
+  </div>
+
+  <div class="card">
+    <h2>Cómo está tu negocio hoy</h2>
+    <p class="muted">Lo que tu negocio tiene por dentro y lo que pasa afuera.</p>
+    <div class="grid">
+      <div class="box bF"><h3>Lo que haces bien <span>Fortalezas</span></h3><ul id="rF"></ul></div>
+      <div class="box bD"><h3>Lo que te cuesta <span>Debilidades</span></h3><ul id="rD"></ul></div>
+      <div class="box bO"><h3>Lo que puedes aprovechar <span>Oportunidades</span></h3><ul id="rO"></ul></div>
+      <div class="box bA"><h3>Lo que te pone en riesgo <span>Amenazas</span></h3><ul id="rA"></ul></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Qué hacer</h2>
+    <p class="muted">Acciones para empezar en los próximos 30 a 90 días.</p>
+    <div class="legend"><span><span class="cost c0">Sin costo</span>solo tu tiempo</span><span><span class="cost c1">Bajo costo</span>gasto pequeño</span><span><span class="cost c2">Requiere inversión</span>planifícalo</span></div>
+    <div class="grid">
+      <div class="box bD"><h3>Corregir <span>lo que te cuesta</span></h3><div id="pC"></div></div>
+      <div class="box bA"><h3>Afrontar <span>los riesgos</span></h3><div id="pA"></div></div>
+      <div class="box bF"><h3>Mantener <span>lo que haces bien</span></h3><div id="pM"></div></div>
+      <div class="box bO"><h3>Aprovechar <span>las oportunidades</span></h3><div id="pE"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Tus 3 prioridades para empezar</h2>
+    <div id="rPrio"></div>
+    <div class="btns"><button class="btn primary" onclick="descargarPDF()">⬇ Descargar mi diagnóstico (PDF)</button></div>
+  </div>
+
+  <div class="card final">
+    <h2 style="color:#fff">Último paso: responde la encuesta</h2>
+    <p>Son unos 5 minutos. Tu código de participante ya irá escrito en la encuesta:</p>
+    <p class="code" style="color:#fff" id="rCode"></p>
+    <button class="btn" id="btnForm" onclick="abrirForm()">Responder la encuesta →</button>
+    <p style="font-size:13px;margin:10px 0 0">Ten a mano tu diagnóstico (en esta página o en el PDF) para responder.</p>
+  </div>
+
+  <div style="text-align:center"><button class="linkbtn" onclick="reiniciar()">Empezar un diagnóstico nuevo</button></div>
+</section>
+
+<footer>Herramienta de investigación · Tesis UTP · Huancayo 2026</footer>
+</div>
+
+<script>
+/* ================= CONFIGURACIÓN ================= */
+// URL de la aplicación web de Apps Script (termina en /exec)
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJQnvqQSPfu92GhLC_DEmmYKNLjVGJ0rQ_EaBlO_-uENjXxQY5FXenjxbDfotgTtkj/exec';
+// Enlace prellenado del Google Forms, terminado en "entry.XXXXXXX=" (el código se agrega al final)
+const FORM_URL = '';
+/* ================================================= */
+
+const DEMO = new URLSearchParams(location.search).has('demo');
+const KEY = 'diagMype_v1';
+
+const PASOS = [
+  { titulo:'Tu negocio', sub:'Cuéntanos lo básico.', preguntas:[
+    {id:'rubro', tipo:'uno', q:'¿A qué se dedica tu negocio?', ops:['Comercio (bodega o tienda)','Restaurante o comida','Servicios','Producción o taller']},
+    {id:'trabajadores', tipo:'uno', q:'¿Cuántas personas trabajan en el negocio, contándote a ti?', ops:['Solo yo','2 a 5','6 a 10','Más de 10'], sinOtro:true},
+    {id:'antiguedad', tipo:'uno', q:'¿Cuánto tiempo tiene tu negocio?', ops:['Menos de 1 año','1 a 3 años','4 a 10 años','Más de 10 años'], sinOtro:true},
+    {id:'canales', tipo:'varios', q:'¿Cómo vendes?', nota:'Puedes marcar varias.', ops:['Local o tienda','WhatsApp','Redes sociales','Delivery','Ferias o venta ambulante','Página web']},
+    {id:'clientes', tipo:'varios', q:'¿Quiénes son tus principales clientes?', nota:'Puedes marcar varias.', ops:['Vecinos de la zona','Otras empresas o negocios','Turistas o gente de paso','Clientes que llegan por redes']}
+  ]},
+  { titulo:'Por dentro de tu negocio', sub:'Lo que depende de ti.', preguntas:[
+    {id:'fortalezas', tipo:'varios', max:3, q:'¿Por qué crees que te compran a ti?', nota:'Marca hasta 3.', ops:['Buen precio','Buena atención','Calidad','Ubicación','Confianza o años en la zona','Variedad','Rapidez']},
+    {id:'dificultades', tipo:'varios', max:3, q:'¿Qué es lo que más te cuesta?', nota:'Marca hasta 3.', ops:['Conseguir clientes nuevos','Que los clientes vuelvan','Saber cuánto gano','Poner precios','Hacer publicidad','Manejar redes sociales','Conseguir capital','Encontrar o mantener personal']},
+    {id:'texto_interno', tipo:'texto', q:'Con tus palabras: ¿qué es lo que mejor haces y qué te gustaría mejorar?', nota:'Opcional.', ph:'Ej.: Mis clientes vuelven por la sazón, pero no sé si estoy ganando o perdiendo.'}
+  ]},
+  { titulo:'Lo que pasa afuera', sub:'Lo que pasa en tu zona y en tu rubro.', preguntas:[
+    {id:'oportunidades', tipo:'varios', max:3, q:'¿Qué podrías aprovechar?', nota:'Marca hasta 3.', ops:['Más gente en la zona','Más gente comprando por redes','Competencia débil','Temporadas o fechas especiales','Nuevos proveedores','Apoyo del Estado o financiamiento']},
+    {id:'preocupaciones', tipo:'varios', max:3, q:'¿Qué te preocupa?', nota:'Marca hasta 3.', ops:['Nuevos competidores','Precios que suben','Ventas bajas en la zona','Inseguridad','Cambios en lo que buscan los clientes','Trámites o impuestos']},
+    {id:'texto_externo', tipo:'texto', q:'¿Hay algo de tu zona o tu rubro que te preocupe o que veas como oportunidad?', nota:'Opcional.', ph:'Ej.: Abrieron dos negocios parecidos en mi cuadra.'}
+  ]},
+  { titulo:'Tu meta', sub:'Último paso antes de tu diagnóstico.', preguntas:[
+    {id:'meta', tipo:'uno', q:'¿Qué te gustaría lograr en los próximos 6 meses?', ops:['Vender más','Ganar más por cada venta','Conseguir clientes nuevos','Ordenar el negocio','Vender por internet','Abrir otro local']}
+  ]}
+];
+
+let st = cargar() || nuevoEstado();
+function nuevoEstado(){ return {codigo:nuevoCodigo(), paso:-1, r:{}, otro:{}, diag:null}; }
+function nuevoCodigo(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; const a=new Uint32Array(4); (window.crypto||{getRandomValues:x=>x.map(()=>Math.random()*1e9)}).getRandomValues(a); a.forEach(v=>s+=c[v%c.length]); return 'MP-'+s; }
+function guardar(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} }
+function cargar(){ try{ return JSON.parse(localStorage.getItem(KEY)); }catch(e){ return null; } }
+
+function mostrar(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id===id)); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function empezar(){
+  if(!document.getElementById('acepto').checked){ document.getElementById('err0').classList.add('show'); return; }
+  document.getElementById('err0').classList.remove('show');
+  st.acepto = true; irPaso(0);
+}
+
+function irPaso(i){
+  st.paso=i; guardar();
+  const P=PASOS[i];
+  document.getElementById('pbar').style.width=((i+1)/PASOS.length*100)+'%';
+  document.getElementById('steptxt').textContent='Paso '+(i+1)+' de '+PASOS.length;
+  document.getElementById('qtitle').textContent=P.titulo;
+  document.getElementById('qsub').textContent=P.sub;
+  document.getElementById('btnNext').textContent = i===PASOS.length-1 ? 'Ver mi diagnóstico ✦' : 'Siguiente →';
+  document.getElementById('errQ').classList.remove('show');
+  const body=document.getElementById('qbody'); body.innerHTML='';
+  P.preguntas.forEach(q=>body.appendChild(renderPregunta(q)));
+  mostrar('sQ');
+}
+
+function renderPregunta(q){
+  const w=document.createElement('div');
+  const t=document.createElement('div'); t.className='q'; t.textContent=q.q;
+  if(q.nota){ const s=document.createElement('small'); s.textContent=q.nota; t.appendChild(s); }
+  w.appendChild(t);
+  if(q.tipo==='texto'){
+    const ta=document.createElement('textarea'); ta.maxLength=300; ta.placeholder=q.ph||''; ta.value=st.r[q.id]||'';
+    const c=document.createElement('div'); c.className='count'; c.textContent=ta.value.length+'/300';
+    ta.oninput=()=>{ st.r[q.id]=ta.value; c.textContent=ta.value.length+'/300'; guardar(); };
+    w.appendChild(ta); w.appendChild(c); return w;
+  }
+  const ops = q.sinOtro ? q.ops : q.ops.concat(['Otro']);
+  const cont=document.createElement('div'); cont.className='chips';
+  const otroIn=document.createElement('input'); otroIn.type='text'; otroIn.className='otro'; otroIn.maxLength=80; otroIn.placeholder='Escribe cuál…';
+  otroIn.value=st.otro[q.id]||''; otroIn.oninput=()=>{ st.otro[q.id]=otroIn.value; guardar(); };
+  const sel=()=> q.tipo==='uno' ? (st.r[q.id]?[st.r[q.id]]:[]) : (st.r[q.id]||[]);
+  const pintar=()=>{
+    const s=sel();
+    cont.querySelectorAll('.chip').forEach(b=>{
+      const on=s.includes(b.dataset.v); b.setAttribute('aria-pressed', on);
+      b.disabled = q.max && !on && s.length>=q.max;
+    });
+    otroIn.classList.toggle('show', s.includes('Otro'));
+  };
+  ops.forEach(o=>{
+    const b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=o; b.dataset.v=o;
+    b.onclick=()=>{
+      if(q.tipo==='uno'){ st.r[q.id] = st.r[q.id]===o ? '' : o; }
+      else { const a=st.r[q.id]||[]; const k=a.indexOf(o); if(k>=0) a.splice(k,1); else if(!q.max||a.length<q.max) a.push(o); st.r[q.id]=a; }
+      pintar(); guardar(); if(o==='Otro' && sel().includes('Otro')) otroIn.focus();
+    };
+    cont.appendChild(b);
+  });
+  w.appendChild(cont); w.appendChild(otroIn); pintar(); return w;
+}
+
+function validarPaso(i){
+  for(const q of PASOS[i].preguntas){
+    if(q.tipo==='texto') continue;
+    const v=st.r[q.id];
+    const vacio = q.tipo==='uno' ? !v : !(v&&v.length);
+    if(vacio) return 'Responde: "'+q.q+'"';
+    const tieneOtro = q.tipo==='uno' ? v==='Otro' : v.includes('Otro');
+    if(tieneOtro && !(st.otro[q.id]||'').trim()) return 'Escribe tu respuesta en "Otro" de: "'+q.q+'"';
+  }
+  return '';
+}
+
+function siguiente(){
+  const e=validarPaso(st.paso);
+  if(e){ const b=document.getElementById('errQ'); b.textContent=e; b.classList.add('show'); return; }
+  if(st.paso<PASOS.length-1) irPaso(st.paso+1); else generar();
+}
+function atras(){ if(st.paso>0) irPaso(st.paso-1); else { st.paso=-1; guardar(); mostrar('s0'); } }
+
+function valor(id){
+  const v=st.r[id], o=(st.otro[id]||'').trim();
+  if(Array.isArray(v)) return v.map(x=>x==='Otro'?'Otro: '+o:x);
+  if(v==='Otro') return 'Otro: '+o;
+  return v||'';
+}
+function rubroTxt(){ return String(valor('rubro')).replace(/^Otro: /,''); }
+function payload(){
+  return { codigo:st.codigo, rubro:valor('rubro'), trabajadores:valor('trabajadores'), antiguedad:valor('antiguedad'),
+    canales:valor('canales'), clientes:valor('clientes'), fortalezas:valor('fortalezas'), dificultades:valor('dificultades'),
+    texto_interno:(st.r.texto_interno||'').trim(), oportunidades:valor('oportunidades'), preocupaciones:valor('preocupaciones'),
+    texto_externo:(st.r.texto_externo||'').trim(), meta:valor('meta') };
+}
+
+async function generar(){
+  st.paso=PASOS.length; guardar();
+  document.getElementById('loading').style.display='block';
+  document.getElementById('failbox').style.display='none';
+  mostrar('sL');
+  try{
+    let diag;
+    if(DEMO){ await new Promise(r=>setTimeout(r,1200)); if(new URLSearchParams(location.search).has('falla')) throw new Error('demo'); diag=demoDiag(); }
+    else{
+      if(!SCRIPT_URL) throw new Error('Falta configurar SCRIPT_URL');
+      const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),75000);
+      const res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload()),signal:ctl.signal});
+      clearTimeout(to);
+      const j=await res.json();
+      if(!j.ok||!j.diagnostico) throw new Error(j.error||'sin diagnóstico');
+      diag=j.diagnostico;
+    }
+    st.diag=diag; st.fecha=new Date().toLocaleDateString('es-PE',{day:'numeric',month:'long',year:'numeric'}); guardar();
+    pintarResultado();
+  }catch(e){
+    console.error(e);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('failbox').style.display='block';
+  }
+}
+
+function li(arr){ return (arr||[]).map(x=>'<li>'+esc(x)+'</li>').join(''); }
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function costoCls(c){ c=String(c||'').toLowerCase(); return c.indexOf('sin')===0?'c0':(c.indexOf('bajo')===0?'c1':(c.indexOf('requiere')===0||c.indexOf('inver')>=0?'c2':'')); }
+function costoTxt(c){ const k=costoCls(c); return k==='c0'?'Sin costo':k==='c1'?'Bajo costo':k==='c2'?'Requiere inversión':''; }
+function badge(c){ const k=costoCls(c); return k?'<span class="cost '+k+'">'+costoTxt(c)+'</span>':''; }
+function accTxt(a){ return typeof a==='string'?a:(a&&a.texto)||''; }
+function bloque(p){ return p ? '<p>'+esc(p.idea||'')+'</p><ul>'+(p.acciones||[]).map(a=>'<li>'+badge(a&&a.costo)+esc(accTxt(a))+'</li>').join('')+'</ul>' : ''; }
+
+function pintarResultado(){
+  const d=st.diag, s=d.situacion||{}, p=d.plan||{};
+  document.getElementById('rTitulo').textContent='Diagnóstico comercial · '+rubroTxt();
+  document.getElementById('rResumen').textContent=d.resumen||'';
+  document.getElementById('rF').innerHTML=li(s.fortalezas);
+  document.getElementById('rD').innerHTML=li(s.debilidades);
+  document.getElementById('rO').innerHTML=li(s.oportunidades);
+  document.getElementById('rA').innerHTML=li(s.amenazas);
+  document.getElementById('pC').innerHTML=bloque(p.corregir);
+  document.getElementById('pA').innerHTML=bloque(p.afrontar);
+  document.getElementById('pM').innerHTML=bloque(p.mantener);
+  document.getElementById('pE').innerHTML=bloque(p.aprovechar);
+  document.getElementById('rPrio').innerHTML=(d.prioridades||[]).slice(0,3).map((x,i)=>
+    '<div class="prio"><div class="num">'+(i+1)+'</div><div><p>'+badge(x.costo)+'<b>'+esc(x.accion||'')+'</b></p><p class="muted">'+esc(x.por_que||'')+'</p><p><b>Esta semana:</b> '+esc(x.primer_paso||'')+'</p></div></div>').join('');
+  document.getElementById('rCode').textContent=st.codigo;
+  const bf=document.getElementById('btnForm');
+  if(!FORM_URL){ bf.disabled=true; bf.textContent='Encuesta (enlace pendiente)'; }
+  mostrar('sR');
+}
+
+function abrirForm(){ if(FORM_URL) window.open(FORM_URL+encodeURIComponent(st.codigo),'_blank'); }
+
+function reiniciar(){
+  if(!confirm('¿Empezar un diagnóstico nuevo? Se borrará el diagnóstico actual de esta página.')) return;
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  st=nuevoEstado(); document.getElementById('acepto').checked=false; mostrar('s0');
+}
+
+/* ---------- PDF ---------- */
+function descargarPDF(){
+  const { jsPDF } = window.jspdf; const doc=new jsPDF({unit:'mm',format:'a4'});
+  const M=18, W=210-2*M; let y=20;
+  const salto=(h)=>{ if(y+h>280){ doc.addPage(); y=20; } };
+  const txt=(t,size=10.5,style='normal',color=[28,39,51],ind=0)=>{
+    doc.setFont('helvetica',style); doc.setFontSize(size); doc.setTextColor(...color);
+    doc.splitTextToSize(String(t),W-ind).forEach(l=>{ salto(size*0.5); doc.text(l,M+ind,y); y+=size*0.45; });
+  };
+  const titulo=(t,color=[15,110,110])=>{ y+=3; salto(10); txt(t,13,'bold',color); y+=1; };
+  const lista=(arr,ind=4)=>(arr||[]).forEach(x=>txt('• '+x,10.5,'normal',[28,39,51],ind));
+  const d=st.diag, s=d.situacion||{}, p=d.plan||{};
+  txt('Diagnóstico comercial de tu negocio',17,'bold',[15,110,110]);
+  txt('Rubro: '+rubroTxt()+'   ·   Código: '+st.codigo+'   ·   '+(st.fecha||''),9.5,'normal',[91,104,118]);
+  y+=3; txt(d.resumen||'');
+  titulo('Cómo está tu negocio hoy');
+  txt('Lo que haces bien (fortalezas)',11,'bold',[29,122,70]); lista(s.fortalezas);
+  txt('Lo que te cuesta (debilidades)',11,'bold',[181,68,46]); lista(s.debilidades);
+  txt('Lo que puedes aprovechar (oportunidades)',11,'bold',[31,95,168]); lista(s.oportunidades);
+  txt('Lo que te pone en riesgo (amenazas)',11,'bold',[168,102,11]); lista(s.amenazas);
+  titulo('Qué hacer en los próximos 30 a 90 días');
+  [['Corregir lo que te cuesta',p.corregir],['Afrontar los riesgos',p.afrontar],['Mantener lo que haces bien',p.mantener],['Aprovechar las oportunidades',p.aprovechar]].forEach(([n,b])=>{
+    if(!b) return; txt(n,11,'bold'); if(b.idea) txt(b.idea,10.5,'italic',[91,104,118],4); lista((b.acciones||[]).map(a=>(costoTxt(a&&a.costo)?'['+costoTxt(a.costo)+'] ':'')+accTxt(a)));
+  });
+  titulo('Tus 3 prioridades para empezar');
+  (d.prioridades||[]).slice(0,3).forEach((x,i)=>{ txt((i+1)+'. '+(x.accion||'')+(costoTxt(x.costo)?'  ['+costoTxt(x.costo)+']':''),11,'bold'); if(x.por_que) txt(x.por_que,10.5,'normal',[91,104,118],5); if(x.primer_paso) txt('Esta semana: '+x.primer_paso,10.5,'normal',[28,39,51],5); y+=1; });
+  y+=4; txt('Este diagnóstico fue elaborado por inteligencia artificial a partir de tus respuestas. Úsalo como guía y compleméntalo con tu propio criterio. Herramienta de investigación – Tesis UTP, Huancayo 2026.',8.5,'italic',[91,104,118]);
+  doc.save('Diagnostico_'+st.codigo+'.pdf');
+}
+
+/* ---------- Diagnóstico de ejemplo (modo demo) ---------- */
+function demoDiag(){ return {
+  resumen:'Tu restaurante tiene clientes fieles por el sabor y el buen precio, pero depende casi solo de los vecinos y no sabes con certeza cuánto ganas. Con la llegada de nuevos negocios cerca, es momento de ordenar tus números y atraer clientes nuevos.',
+  situacion:{ fortalezas:['Tus clientes vuelven por la sazón','Precios accesibles para la zona'], debilidades:['No llevas un control de ingresos y gastos','Casi no haces publicidad'], oportunidades:['Fechas especiales que aumentan el consumo','Más vecinos piden comida por WhatsApp'], amenazas:['Nuevos restaurantes en la cuadra','Suben los precios de los insumos'] },
+  plan:{ corregir:{idea:'Empieza a saber cuánto ganas por plato.',acciones:[{texto:'Anota cada día lo que vendes y lo que gastas en un cuaderno',costo:'sin costo'},{texto:'Calcula el costo de tus 3 platos más vendidos',costo:'sin costo'}]},
+         afrontar:{idea:'Diferénciate de los nuevos competidores.',acciones:[{texto:'Destaca tu plato estrella en un cartel en la puerta',costo:'bajo costo'},{texto:'Renueva las mesas y la fachada para que el local luzca mejor',costo:'requiere inversión'}]},
+         mantener:{idea:'Cuida lo que ya hacen bien.',acciones:[{texto:'Mantén la receta y las porciones',costo:'sin costo'},{texto:'Pide a tus clientes frecuentes que te recomienden',costo:'sin costo'}]},
+         aprovechar:{idea:'Vende más por WhatsApp.',acciones:[{texto:'Imprime volantes con tu número de WhatsApp para el delivery',costo:'bajo costo'},{texto:'Compra una cocina adicional para atender más pedidos en fechas especiales',costo:'requiere inversión'}]} },
+  prioridades:[ {accion:'Ordenar tus números',costo:'sin costo',por_que:'Sin saber cuánto ganas, no puedes decidir precios ni promociones.',primer_paso:'Compra un cuaderno y anota ventas y gastos cada noche.'},
+                {accion:'Lista de difusión en WhatsApp',costo:'sin costo',por_que:'Te ayuda a conseguir clientes nuevos sin gastar en publicidad.',primer_paso:'Pide el número a 20 clientes frecuentes.'},
+                {accion:'Destacar tu plato estrella',costo:'bajo costo',por_que:'Te diferencia de los negocios nuevos.',primer_paso:'Elige el plato que más elogian y ponlo en un cartel.'} ] }; }
+
+/* ---------- Inicio: retomar si había algo guardado ---------- */
+(function(){
+  if(DEMO) document.getElementById('demoBanner').style.display='block';
+  if(st.diag){ pintarResultado(); }
+  else if(st.paso>=PASOS.length){ generar(); }
+  else if(st.paso>=0 && st.acepto){ document.getElementById('acepto').checked=true; irPaso(st.paso); }
+})();
+</script>
+</body>
+</html>
